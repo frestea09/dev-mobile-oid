@@ -1,8 +1,10 @@
 import { FontAwesome5 } from '@expo/vector-icons';
 import { Link, useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { labels } from '../../constants/labels';
+import { styles } from './index.styles';
 import { useAuthStore } from '../../store/authStore';
 
 export default function RegisterScreen() {
@@ -33,17 +35,17 @@ export default function RegisterScreen() {
     const handleRegister = () => {
         // Basic Validation
         let errorMessage = '';
-        if (!formData.nama.trim()) errorMessage = "Nama Lengkap harus diisi.";
-        else if (!formData.contact.trim()) errorMessage = "Email atau Nomor Telepon harus diisi.";
-        else if (!formData.username.trim()) errorMessage = "Username harus diisi.";
-        else if (!formData.password || formData.password.length < 6) errorMessage = "Password minimal 6 karakter.";
-        else if (!formData.tgllahir.trim()) errorMessage = "Tanggal Lahir harus diisi.";
-        else if (!formData.kelamin) errorMessage = "Pilih Jenis Kelamin.";
-        else if (!formData.alamat.trim()) errorMessage = "Alamat harus diisi.";
+        if (!formData.nama.trim()) errorMessage = `${labels.auth.fullNameLabel} harus diisi.`;
+        else if (!formData.contact.trim()) errorMessage = `${labels.auth.contactLabel} harus diisi.`;
+        else if (!formData.username.trim()) errorMessage = `${labels.auth.usernameLabel} harus diisi.`;
+        else if (!formData.password || formData.password.length < 6) errorMessage = labels.auth.passwordHint;
+        else if (!formData.tgllahir.trim()) errorMessage = `${labels.auth.birthDateLabel} harus diisi.`;
+        else if (!formData.kelamin) errorMessage = `Pilih ${labels.auth.genderLabel}.`;
+        else if (!formData.alamat.trim()) errorMessage = `${labels.auth.addressLabel} harus diisi.`;
 
         if (errorMessage) {
             setError(errorMessage);
-            Alert.alert("Gagal Daftar", errorMessage);
+            Alert.alert(labels.auth.registerErrorTitle, errorMessage);
             return;
         }
 
@@ -71,11 +73,11 @@ export default function RegisterScreen() {
             };
 
             Alert.alert(
-                "Pendaftaran Berhasil",
-                "Akun Anda telah berhasil dibuat. Silakan masuk dengan akun baru Anda.",
+                labels.auth.registerSuccessTitle,
+                labels.auth.registerSuccessMessage,
                 [
                     {
-                        text: "OK",
+                        text: labels.auth.registerOkButton,
                         onPress: successLogin
                     }
                 ]
@@ -86,15 +88,15 @@ export default function RegisterScreen() {
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView contentContainerStyle={styles.content}>
-                <Text style={styles.title}>Daftar Akun Baru</Text>
+                <Text style={styles.title}>{labels.auth.registerTitle}</Text>
 
                 <View style={styles.form}>
                     {/* Nama Lengkap */}
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Nama Lengkap</Text>
+                        <Text style={styles.label}>{labels.auth.fullNameLabel}</Text>
                         <TextInput
                             style={styles.input}
-                            placeholder="Masukkan Nama Lengkap"
+                            placeholder={labels.auth.fullNamePlaceholder}
                             placeholderTextColor="#999"
                             value={formData.nama}
                             onChangeText={(t) => handleChange('nama', t)}
@@ -103,10 +105,10 @@ export default function RegisterScreen() {
 
                     {/* Email/Phone */}
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Email / No. HP</Text>
+                        <Text style={styles.label}>{labels.auth.contactLabel}</Text>
                         <TextInput
                             style={styles.input}
-                            placeholder="Masukkan Email atau Nomor Telepon"
+                            placeholder={labels.auth.contactPlaceholder}
                             placeholderTextColor="#999"
                             value={formData.contact}
                             onChangeText={(t) => handleChange('contact', t)}
@@ -117,10 +119,10 @@ export default function RegisterScreen() {
 
                     {/* Username */}
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Username</Text>
+                        <Text style={styles.label}>{labels.auth.usernameLabel}</Text>
                         <TextInput
                             style={styles.input}
-                            placeholder="Buat Username"
+                            placeholder={labels.auth.usernamePlaceholder}
                             placeholderTextColor="#999"
                             value={formData.username}
                             onChangeText={(t) => handleChange('username', t)}
@@ -130,11 +132,11 @@ export default function RegisterScreen() {
 
                     {/* Password */}
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Password</Text>
+                        <Text style={styles.label}>{labels.auth.registerPasswordLabel}</Text>
                         <View style={styles.passwordContainer}>
                             <TextInput
                                 style={styles.passwordInput}
-                                placeholder="Pilih Kata Sandi"
+                                placeholder={labels.auth.registerPasswordPlaceholder}
                                 placeholderTextColor="#999"
                                 value={formData.password}
                                 onChangeText={(t) => handleChange('password', t)}
@@ -148,15 +150,15 @@ export default function RegisterScreen() {
                                 <FontAwesome5 name={showPassword ? "eye" : "eye-slash"} size={20} color="#999" />
                             </TouchableOpacity>
                         </View>
-                        <Text style={styles.hint}>Minimal 6 karakter</Text>
+                        <Text style={styles.hint}>{labels.auth.passwordHint}</Text>
                     </View>
 
                     {/* Tanggal Lahir (Simple Text for now) */}
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Tanggal Lahir</Text>
+                        <Text style={styles.label}>{labels.auth.birthDateLabel}</Text>
                         <TextInput
                             style={styles.input}
-                            placeholder="YYYY-MM-DD (Contoh: 1990-01-31)"
+                            placeholder={labels.auth.birthDatePlaceholder}
                             placeholderTextColor="#999"
                             value={formData.tgllahir}
                             onChangeText={(t) => handleChange('tgllahir', t)}
@@ -165,31 +167,35 @@ export default function RegisterScreen() {
 
                     {/* Jenis Kelamin */}
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Jenis Kelamin</Text>
+                        <Text style={styles.label}>{labels.auth.genderLabel}</Text>
                         <View style={styles.genderContainer}>
                             <TouchableOpacity
                                 style={[styles.genderButton, formData.kelamin === 'L' && styles.genderButtonActive]}
                                 onPress={() => handleChange('kelamin', 'L')}
                             >
                                 <FontAwesome5 name="male" size={20} color={formData.kelamin === 'L' ? '#fff' : '#666'} />
-                                <Text style={[styles.genderText, formData.kelamin === 'L' && styles.genderTextActive]}>Laki-laki</Text>
+                                <Text style={[styles.genderText, formData.kelamin === 'L' && styles.genderTextActive]}>
+                                    {labels.auth.maleLabel}
+                                </Text>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 style={[styles.genderButton, formData.kelamin === 'P' && styles.genderButtonActive]}
                                 onPress={() => handleChange('kelamin', 'P')}
                             >
                                 <FontAwesome5 name="female" size={20} color={formData.kelamin === 'P' ? '#fff' : '#666'} />
-                                <Text style={[styles.genderText, formData.kelamin === 'P' && styles.genderTextActive]}>Perempuan</Text>
+                                <Text style={[styles.genderText, formData.kelamin === 'P' && styles.genderTextActive]}>
+                                    {labels.auth.femaleLabel}
+                                </Text>
                             </TouchableOpacity>
                         </View>
                     </View>
 
                     {/* Alamat */}
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Alamat Lengkap</Text>
+                        <Text style={styles.label}>{labels.auth.addressLabel}</Text>
                         <TextInput
-                            style={[styles.input, { height: 80, textAlignVertical: 'top' }]}
-                            placeholder="Masukkan Alamat Lengkap"
+                            style={[styles.input, styles.textArea]}
+                            placeholder={labels.auth.addressPlaceholder}
                             placeholderTextColor="#999"
                             value={formData.alamat}
                             onChangeText={(t) => handleChange('alamat', t)}
@@ -199,10 +205,10 @@ export default function RegisterScreen() {
 
                     {/* BPJS (Optional) */}
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Nomor BPJS (Opsional)</Text>
+                        <Text style={styles.label}>{labels.auth.bpjsLabel}</Text>
                         <TextInput
                             style={styles.input}
-                            placeholder="Masukkan Nomor BPJS"
+                            placeholder={labels.auth.bpjsPlaceholder}
                             placeholderTextColor="#999"
                             value={formData.no_bpjs}
                             onChangeText={(t) => handleChange('no_bpjs', t)}
@@ -226,145 +232,18 @@ export default function RegisterScreen() {
                     {loading ? (
                         <ActivityIndicator color="#fff" />
                     ) : (
-                        <Text style={styles.registerButtonText}>Daftar</Text>
+                        <Text style={styles.registerButtonText}>{labels.auth.registerButton}</Text>
                     )}
                 </TouchableOpacity>
 
                 <Link href="/" asChild>
                     <TouchableOpacity style={styles.loginLink}>
-                        <Text style={styles.loginLinkText}>Sudah punya akun? Masuk.</Text>
+                        <Text style={styles.loginLinkText}>
+                            {labels.auth.existingAccountPrompt} {labels.auth.loginButton}.
+                        </Text>
                     </TouchableOpacity>
                 </Link>
             </ScrollView>
         </SafeAreaView>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#FFFFFF',
-    },
-    content: {
-        padding: 24,
-        paddingBottom: 40,
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#333',
-        marginBottom: 30,
-        marginTop: 10,
-        textAlign: 'center',
-    },
-    form: {
-        marginBottom: 24,
-    },
-    inputGroup: {
-        marginBottom: 16,
-    },
-    label: {
-        fontSize: 14,
-        fontWeight: '500',
-        color: '#333',
-        marginBottom: 8,
-    },
-    input: {
-        backgroundColor: '#F5F5F5',
-        borderRadius: 12,
-        padding: 14,
-        fontSize: 16,
-        color: '#333',
-        borderWidth: 1,
-        borderColor: '#E0E0E0',
-    },
-    passwordContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#F5F5F5',
-        borderRadius: 12,
-        borderWidth: 1,
-        borderColor: '#E0E0E0',
-    },
-    passwordInput: {
-        flex: 1,
-        padding: 14,
-        fontSize: 16,
-        color: '#333',
-    },
-    eyeIcon: {
-        padding: 14,
-    },
-    hint: {
-        fontSize: 12,
-        color: '#666',
-        marginTop: 4,
-        marginLeft: 4,
-    },
-    genderContainer: {
-        flexDirection: 'row',
-        gap: 12,
-    },
-    genderButton: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#F5F5F5',
-        padding: 14,
-        borderRadius: 12,
-        borderWidth: 1,
-        borderColor: '#E0E0E0',
-        gap: 8,
-    },
-    genderButtonActive: {
-        backgroundColor: '#2196F3',
-        borderColor: '#2196F3',
-    },
-    genderText: {
-        fontSize: 16,
-        color: '#666',
-        fontWeight: '500',
-    },
-    genderTextActive: {
-        color: '#fff',
-    },
-    errorContainer: {
-        marginBottom: 20,
-        alignItems: 'center',
-        backgroundColor: '#FFEBEE',
-        padding: 12,
-        borderRadius: 8,
-    },
-    errorText: {
-        color: '#D32F2F',
-        fontSize: 14,
-        textAlign: 'center',
-    },
-    registerButton: {
-        backgroundColor: '#4CAF50',
-        paddingVertical: 16,
-        borderRadius: 12,
-        alignItems: 'center',
-        marginBottom: 24,
-        shadowColor: '#4CAF50',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
-        elevation: 4,
-    },
-    registerButtonText: {
-        color: '#fff',
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
-    loginLink: {
-        alignItems: 'center',
-        padding: 12,
-    },
-    loginLinkText: {
-        color: '#2196F3',
-        fontSize: 14,
-        fontWeight: '500',
-    },
-});
