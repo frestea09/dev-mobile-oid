@@ -8,6 +8,10 @@ interface User {
     address: string;
     birthDate: string;
     gender: string;
+    allergies?: string;
+    bloodType?: string;
+    medicalHistory?: string;
+    nik?: string;
 }
 
 interface AuthState {

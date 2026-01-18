@@ -1,10 +1,11 @@
 import { FontAwesome5 } from '@expo/vector-icons';
 import { Link, useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { ActivityIndicator, Alert, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { labels } from '../../constants/labels';
 import { useAuthStore } from '../../store/authStore';
+import { PlatformAlert } from '../../utils/platformAlert';
 import { styles } from './index.styles';
 
 export default function RegisterScreen() {
@@ -45,14 +46,13 @@ export default function RegisterScreen() {
 
         if (errorMessage) {
             setError(errorMessage);
-            Alert.alert(labels.auth.registerErrorTitle, errorMessage);
+            PlatformAlert.alert(labels.auth.registerErrorTitle, errorMessage);
             return;
         }
 
         setError('');
         setLoading(true);
 
-        // Simulate API Call
         // Simulate API Call
         setTimeout(() => {
             setLoading(false);
@@ -71,21 +71,16 @@ export default function RegisterScreen() {
             });
 
             // Handle navigation based on platform
-            if (Platform.OS === 'web') {
-                window.alert(labels.auth.registerSuccessMessage);
-                router.replace('/');
-            } else {
-                Alert.alert(
-                    labels.auth.registerSuccessTitle,
-                    labels.auth.registerSuccessMessage,
-                    [
-                        {
-                            text: labels.auth.registerOkButton,
-                            onPress: () => router.replace('/')
-                        }
-                    ]
-                );
-            }
+            PlatformAlert.alert(
+                labels.auth.registerSuccessTitle,
+                labels.auth.registerSuccessMessage,
+                [
+                    {
+                        text: labels.auth.registerOkButton,
+                        onPress: () => router.replace('/')
+                    }
+                ]
+            );
         }, 1500);
     };
 

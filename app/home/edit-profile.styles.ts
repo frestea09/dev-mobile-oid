@@ -6,7 +6,20 @@ export const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
     content: {
-        padding: 20,
+        padding: 24,
+    },
+    section: {
+        marginTop: 24,
+    },
+    sectionTitle: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#333',
+        marginBottom: 16,
+    },
+    row: {
+        flexDirection: 'row',
+        gap: 12,
     },
     formGroup: {
         marginBottom: 20,

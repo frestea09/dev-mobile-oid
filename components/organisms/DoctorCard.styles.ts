@@ -38,6 +38,36 @@ export const styles = StyleSheet.create({
         fontSize: 14,
         color: '#666',
     },
+    subInfo: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+        marginTop: 2,
+    },
+    ratingContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#FFFDE7',
+        paddingHorizontal: 6,
+        paddingVertical: 2,
+        borderRadius: 4,
+        gap: 4,
+    },
+    ratingText: {
+        fontSize: 10,
+        fontWeight: 'bold',
+        color: '#FBC02D',
+    },
+    locationContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4,
+        marginTop: 4,
+    },
+    locationText: {
+        fontSize: 12,
+        color: '#666',
+    },
     price: {
         fontSize: 14,
         color: '#4CAF50',

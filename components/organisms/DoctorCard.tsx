@@ -10,6 +10,8 @@ interface DoctorCardProps {
     doctorName: string;
     specialist: string;
     price?: string;
+    rating?: number;
+    location?: string;
     actionLabel?: string;
     onPress?: () => void;
     style?: ViewStyle;
@@ -20,6 +22,8 @@ export function DoctorCard({
     doctorName,
     specialist,
     price,
+    rating,
+    location,
     actionLabel,
     onPress,
     style,
@@ -34,7 +38,21 @@ export function DoctorCard({
                 </View>
                 <View>
                     <Text style={styles.name}>{doctorName}</Text>
-                    <Text style={styles.specialist}>{specialist}</Text>
+                    <View style={styles.subInfo}>
+                        <Text style={styles.specialist}>{specialist}</Text>
+                        {rating ? (
+                            <View style={styles.ratingContainer}>
+                                <FontAwesome5 name="star" size={10} color="#FFD700" solid />
+                                <Text style={styles.ratingText}>{rating}</Text>
+                            </View>
+                        ) : null}
+                    </View>
+                    {location ? (
+                        <View style={styles.locationContainer}>
+                            <FontAwesome5 name="map-marker-alt" size={10} color="#666" />
+                            <Text style={styles.locationText}>{location}</Text>
+                        </View>
+                    ) : null}
                     {price ? <Text style={styles.price}>{price}</Text> : null}
                 </View>
             </View>

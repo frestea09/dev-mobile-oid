@@ -1,10 +1,11 @@
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, Text, TextInput, View } from 'react-native';
+import { Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppButton } from '../components/atoms/AppButton';
 import { ScreenHeader } from '../components/molecules/ScreenHeader';
 import { labels } from '../constants/labels';
+import { PlatformAlert } from '../utils/platformAlert';
 import { styles } from './forgot-password.styles';
 
 export default function ForgotPasswordScreen() {
@@ -13,11 +14,11 @@ export default function ForgotPasswordScreen() {
 
     const handleReset = () => {
         if (!email) {
-            Alert.alert(labels.auth.forgotPasswordAlertTitle, labels.auth.forgotPasswordAlertMessage);
+            PlatformAlert.alert(labels.auth.forgotPasswordAlertTitle, labels.auth.forgotPasswordAlertMessage);
             return;
         }
 
-        Alert.alert(
+        PlatformAlert.alert(
             labels.auth.forgotPasswordSuccessTitle,
             labels.auth.forgotPasswordSuccessMessage,
             [{ text: labels.auth.backToLogin, onPress: () => router.back() }]

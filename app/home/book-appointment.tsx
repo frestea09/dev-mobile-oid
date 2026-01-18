@@ -1,15 +1,16 @@
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { AppButton } from '../../components/atoms/AppButton';
+import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScreenHeader } from '../../components/molecules/ScreenHeader';
-import { calendarDates, doctors, timeSlots } from '../../constants/demoData';
+import { doctors } from '../../constants/demoData';
 import { labels } from '../../constants/labels';
 import { useAuthStore } from '../../store/authStore';
 import { useBookingStore } from '../../store/bookingStore';
 import { createAppointment } from '../../utils/booking';
 import { getStringParam } from '../../utils/params';
+import { PlatformAlert } from '../../utils/platformAlert';
 import { styles } from './book-appointment.styles';
 
 export default function BookAppointmentScreen() {
@@ -22,16 +23,42 @@ export default function BookAppointmentScreen() {
     const fallbackDoctor = doctors[0];
     const doctorName = getStringParam(params.name ?? params.doctorName, fallbackDoctor.name);
     const specialist = getStringParam(params.specialist, fallbackDoctor.specialist);
-    const hospital = getStringParam(params.hospital, fallbackDoctor.hospital);
+    const hospital = getStringParam(params.location || params.hospital, fallbackDoctor.location);
     const doctor = {
         name: doctorName,
         specialist,
         location: hospital,
     };
 
+    // Dynamic Dates (Tomorrow onwards)
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const dayAfter = new Date(today);
+    dayAfter.setDate(dayAfter.getDate() + 2);
+    const dayAfterNext = new Date(today);
+    dayAfterNext.setDate(dayAfterNext.getDate() + 3);
+
+    const formatDate = (date: Date) => {
+        const d = date.getDate().toString().padStart(2, '0');
+        const m = (date.getMonth() + 1).toString().padStart(2, '0');
+        const y = date.getFullYear();
+        return `${y}-${m}-${d}`;
+    };
+
+    const getDayName = (date: Date) => {
+        const days = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+        return days[date.getDay()];
+    };
+
+    const customCalendarDates = [
+        { date: formatDate(tomorrow), day: getDayName(tomorrow), label: tomorrow.getDate().toString() },
+        { date: formatDate(dayAfter), day: getDayName(dayAfter), label: dayAfter.getDate().toString() },
+        { date: formatDate(dayAfterNext), day: getDayName(dayAfterNext), label: dayAfterNext.getDate().toString() },
+    ];
+
     // Form State
-    const [selectedDate, setSelectedDate] = useState(calendarDates[1]?.date ?? calendarDates[0]?.date ?? '');
-    const [selectedTime, setSelectedTime] = useState('');
+    const [selectedDate, setSelectedDate] = useState(customCalendarDates[0].date);
     const [userData, setUserData] = useState({
         name: user?.name || '',
         phone: user?.phone || '',
@@ -40,60 +67,60 @@ export default function BookAppointmentScreen() {
     });
     const [isEditing, setIsEditing] = useState(false);
 
-    // Mock Calendar Dates
     const handleConfirm = () => {
-        if (!selectedTime) {
-            Alert.alert(labels.booking.attentionTitle, labels.booking.attentionMessage);
-            return;
-        }
+        const confirmAction = () => {
+            addAppointment(
+                createAppointment({
+                    doctorName: doctor.name,
+                    specialist: doctor.specialist,
+                    hospital: doctor.location,
+                    date: selectedDate,
+                    time: '--:--', // Placeholder or empty
+                })
+            );
+            // Navigate to Success Screen
+            router.replace('/home/appointment-success');
+        };
 
-        Alert.alert(
+        PlatformAlert.alert(
             labels.booking.confirmTitle,
-            `${labels.booking.doctorLabel}: ${doctor.name}\n${labels.booking.dateLabel}: ${selectedDate}\n${labels.booking.timeLabel}: ${selectedTime}`,
+            `${labels.booking.doctorLabel}: ${doctor.name}\n${labels.booking.dateLabel}: ${selectedDate}`,
             [
                 { text: labels.booking.cancel, style: 'cancel' },
                 {
                     text: labels.booking.confirm,
-                    onPress: () => {
-                        addAppointment(
-                            createAppointment({
-                                doctorName: doctor.name,
-                                specialist: doctor.specialist,
-                                hospital: doctor.location,
-                                date: selectedDate,
-                                time: selectedTime,
-                            })
-                        );
-                        // Navigate to Success Screen
-                        router.replace('/home/appointment-success');
-                    }
+                    onPress: confirmAction
                 }
             ]
         );
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={styles.container} edges={['top']}>
             <ScreenHeader title={labels.booking.headerTitle} onBack={() => router.back()} />
 
-            <ScrollView contentContainerStyle={styles.content}>
+            <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
 
-                {/* Doctor Summary */}
-                <View style={styles.doctorSummary}>
-                    <View style={styles.avatarContainer}>
+                {/* Premium Doctor Header */}
+                <View style={styles.doctorHeader}>
+                    <View style={styles.avatarLarge}>
                         <FontAwesome5 name="user-md" size={40} color="#2196F3" />
                     </View>
-                    <View>
+                    <View style={styles.doctorInfo}>
                         <Text style={styles.docName}>{doctor.name}</Text>
                         <Text style={styles.docSpecialist}>{doctor.specialist}</Text>
+                        <Text style={styles.docHospital}>{doctor.location}</Text>
                     </View>
                 </View>
 
-                {/* Date Selection (Calendar) */}
+                {/* Date Selection (Calendar View Style) */}
                 <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>{labels.booking.selectDate}</Text>
+                    <View style={styles.sectionHeader}>
+                        <Text style={styles.sectionTitle}>{labels.booking.selectDate}</Text>
+                        <Text style={{ fontSize: 11, color: '#94A3B8' }}>{labels.history.bookingRestriction}</Text>
+                    </View>
                     <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.calendarScroll}>
-                        {calendarDates.map((item, index) => (
+                        {customCalendarDates.map((item, index) => (
                             <TouchableOpacity
                                 key={index}
                                 style={[styles.dateCard, selectedDate === item.date && styles.dateCardActive]}
@@ -106,23 +133,7 @@ export default function BookAppointmentScreen() {
                     </ScrollView>
                 </View>
 
-                {/* Time Selection */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>{labels.booking.selectTime}</Text>
-                    <View style={styles.timeGrid}>
-                        {timeSlots.map((time, index) => (
-                            <TouchableOpacity
-                                key={index}
-                                style={[styles.timeSlot, selectedTime === time && styles.timeSlotActive]}
-                                onPress={() => setSelectedTime(time)}
-                            >
-                                <Text style={[styles.timeText, selectedTime === time && styles.textActive]}>{time}</Text>
-                            </TouchableOpacity>
-                        ))}
-                    </View>
-                </View>
-
-                {/* User Info Confirmation */}
+                {/* Personal Data Confirmation */}
                 <View style={styles.section}>
                     <View style={styles.sectionHeader}>
                         <Text style={styles.sectionTitle}>{labels.booking.confirmPersonalData}</Text>
@@ -160,25 +171,31 @@ export default function BookAppointmentScreen() {
                             keyboardType="number-pad"
                         />
                     </View>
+                    <View style={styles.formGroup}>
+                        <Text style={styles.label}>{labels.booking.address}</Text>
+                        <TextInput
+                            style={[styles.input, !isEditing && styles.inputDisabled]}
+                            value={userData.address}
+                            editable={isEditing}
+                            onChangeText={(t) => setUserData({ ...userData, address: t })}
+                            multiline
+                        />
+                    </View>
                 </View>
 
                 {/* Booking Summary Card */}
                 <View style={styles.summaryCard}>
                     <Text style={styles.summaryTitle}>{labels.booking.summaryTitle}</Text>
                     <View style={styles.summaryRow}>
-                        <FontAwesome5 name="user-md" size={14} color="#666" style={styles.summaryIcon} />
+                        <FontAwesome5 name="user-md" size={14} color="#1565C0" style={styles.summaryIcon} />
                         <Text style={styles.summaryText}>{doctor.name}</Text>
                     </View>
                     <View style={styles.summaryRow}>
-                        <FontAwesome5 name="calendar-day" size={14} color="#666" style={styles.summaryIcon} />
+                        <FontAwesome5 name="calendar-alt" size={14} color="#1565C0" style={styles.summaryIcon} />
                         <Text style={styles.summaryText}>{selectedDate}</Text>
                     </View>
                     <View style={styles.summaryRow}>
-                        <FontAwesome5 name="clock" size={14} color="#666" style={styles.summaryIcon} />
-                        <Text style={styles.summaryText}>{selectedTime || labels.booking.emptyTime}</Text>
-                    </View>
-                    <View style={styles.summaryRow}>
-                        <FontAwesome5 name="map-marker-alt" size={14} color="#666" style={styles.summaryIcon} />
+                        <FontAwesome5 name="map-marker-alt" size={14} color="#1565C0" style={styles.summaryIcon} />
                         <Text style={styles.summaryText}>{doctor.location}</Text>
                     </View>
                 </View>
@@ -186,7 +203,9 @@ export default function BookAppointmentScreen() {
             </ScrollView>
 
             <View style={styles.footer}>
-                <AppButton label={labels.booking.confirmButton} onPress={handleConfirm} variant="success" />
+                <TouchableOpacity style={styles.confirmButton} onPress={handleConfirm}>
+                    <Text style={styles.confirmButtonText}>{labels.booking.confirmButton}</Text>
+                </TouchableOpacity>
             </View>
         </SafeAreaView>
     );

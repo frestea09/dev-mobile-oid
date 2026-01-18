@@ -1,0 +1,295 @@
+import { StyleSheet } from 'react-native';
+
+export const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#fff',
+    },
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        backgroundColor: '#fff',
+        borderBottomWidth: 1,
+        borderBottomColor: '#F1F3F5',
+    },
+    backButton: {
+        width: 40,
+        height: 40,
+        justifyContent: 'center',
+    },
+    headerTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#333',
+        marginLeft: 8,
+    },
+    content: {
+        flex: 1,
+    },
+    profileSection: {
+        alignItems: 'center',
+        padding: 24,
+    },
+    avatarContainer: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        backgroundColor: '#E3F2FD',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 16,
+    },
+    doctorName: {
+        fontSize: 22,
+        fontWeight: 'bold',
+        color: '#333',
+        marginBottom: 4,
+    },
+    specialist: {
+        fontSize: 16,
+        color: '#666',
+        marginBottom: 12,
+    },
+    ratingBadge: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#FFFDE7',
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 20,
+        gap: 6,
+    },
+    ratingText: {
+        fontSize: 14,
+        fontWeight: 'bold',
+        color: '#FBC02D',
+    },
+    section: {
+        paddingHorizontal: 20,
+        paddingBottom: 24,
+    },
+    sectionTitle: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#333',
+        marginBottom: 12,
+    },
+    // About Section
+    aboutCard: {
+        backgroundColor: '#F8F9FA',
+        padding: 16,
+        borderRadius: 12,
+        marginBottom: 8,
+    },
+    aboutItem: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        marginBottom: 12,
+        gap: 12,
+    },
+    aboutItemText: {
+        flex: 1,
+    },
+    aboutItemLabel: {
+        fontSize: 12,
+        color: '#666',
+        fontWeight: '600',
+        marginBottom: 2,
+    },
+    aboutItemValue: {
+        fontSize: 14,
+        color: '#333',
+        lineHeight: 20,
+    },
+    // Reviews Section
+    reviewSummary: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: 16,
+    },
+    reviewCount: {
+        fontSize: 14,
+        color: '#666',
+    },
+    reviewCard: {
+        backgroundColor: '#fff',
+        padding: 16,
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: '#F1F3F5',
+        marginBottom: 12,
+    },
+    reviewHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 8,
+    },
+    reviewerName: {
+        fontSize: 14,
+        fontWeight: 'bold',
+        color: '#333',
+    },
+    reviewComment: {
+        fontSize: 14,
+        color: '#666',
+        lineHeight: 20,
+        fontStyle: 'italic',
+    },
+    seeAllLink: {
+        alignItems: 'center',
+        marginTop: 4,
+    },
+    seeAllText: {
+        fontSize: 14,
+        color: '#2196F3',
+        fontWeight: '600',
+    },
+    // Practice Schedule
+    scheduleGrid: {
+        gap: 12,
+    },
+    scheduleRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        backgroundColor: '#F8F9FA',
+        padding: 16,
+        borderRadius: 12,
+    },
+    scheduleDayInfo: {
+        flex: 1,
+    },
+    scheduleDayNext: {
+        fontSize: 14,
+        fontWeight: 'bold',
+        color: '#333',
+    },
+    scheduleTime: {
+        fontSize: 13,
+        color: '#666',
+        marginTop: 2,
+    },
+    statusIndicator: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#E8F5E9',
+        paddingHorizontal: 10,
+        paddingVertical: 4,
+        borderRadius: 6,
+        gap: 6,
+    },
+    statusDot: {
+        width: 6,
+        height: 6,
+        borderRadius: 3,
+        backgroundColor: '#4CAF50',
+    },
+    statusLabel: {
+        fontSize: 12,
+        fontWeight: 'bold',
+        color: '#2E7D32',
+    },
+    statusFull: {
+        backgroundColor: '#F1F3F5',
+    },
+    statusDotFull: {
+        backgroundColor: '#94A3B8',
+    },
+    statusLabelFull: {
+        color: '#666',
+    },
+    // Location & Contact
+    locationCard: {
+        backgroundColor: '#F8F9FA',
+        padding: 16,
+        borderRadius: 12,
+        gap: 16,
+    },
+    locationHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+    },
+    locationIcon: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: '#E8F5E9',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    locationAddress: {
+        flex: 1,
+        fontSize: 14,
+        color: '#333',
+        lineHeight: 20,
+    },
+    locationActions: {
+        flexDirection: 'row',
+        gap: 10,
+    },
+    locationButton: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#fff',
+        borderWidth: 1,
+        borderColor: '#E3E8ED',
+        paddingVertical: 10,
+        borderRadius: 8,
+        gap: 8,
+    },
+    locationButtonText: {
+        fontSize: 13,
+        fontWeight: '600',
+        color: '#495057',
+    },
+    // Footer Actions
+    footerAction: {
+        padding: 20,
+        paddingBottom: 30,
+        borderTopWidth: 1,
+        borderTopColor: '#F1F3F5',
+        backgroundColor: '#fff',
+        flexDirection: 'row',
+        gap: 12,
+    },
+    askButton: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#F1F8FF',
+        borderWidth: 1,
+        borderColor: '#B6D4FE',
+        paddingVertical: 16,
+        borderRadius: 12,
+        gap: 8,
+    },
+    askButtonText: {
+        color: '#0D6EFD',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    bookButton: {
+        flex: 2,
+        backgroundColor: '#2196F3',
+        paddingVertical: 16,
+        borderRadius: 12,
+        alignItems: 'center',
+        shadowColor: '#2196F3',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 8,
+        elevation: 4,
+    },
+    bookButtonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+});

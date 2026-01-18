@@ -8,30 +8,53 @@ export interface Appointment {
     date: string;
     time: string;
     status: 'upcoming' | 'completed' | 'cancelled';
+    diagnosis?: string;
+    serviceName?: string;
+    paymentStatus?: 'paid' | 'pending';
 }
 
 interface BookingState {
     appointments: Appointment[];
     addAppointment: (appointment: Appointment) => void;
     cancelAppointment: (id: string) => void;
+    rescheduleAppointment: (id: string, date: string, time: string) => void;
 }
 
 export const useBookingStore = create<BookingState>((set) => ({
     appointments: [
         {
             id: '1',
-            doctorName: 'Dr. Budi Santoso',
+            doctorName: 'Dr. Andi Pratama',
             specialist: 'Spesialis Jantung',
             hospital: 'RSUD O.I.D',
             date: '2026-01-20',
-            time: '09:00',
+            time: '09:30',
             status: 'upcoming',
+        },
+        {
+            id: '2',
+            doctorName: 'Dr. Siti Aminah',
+            specialist: 'Dokter Umum',
+            hospital: 'RSUD O.I.D',
+            date: '2026-01-15',
+            time: '08:00',
+            status: 'completed',
+            diagnosis: 'Gejala flu ringan, butuh istirahat.',
+            serviceName: 'Konsultasi Umum',
+            paymentStatus: 'paid',
         }
     ],
     addAppointment: (appointment) => set((state) => ({
         appointments: [appointment, ...state.appointments]
     })),
     cancelAppointment: (id) => set((state) => ({
-        appointments: state.appointments.filter(app => app.id !== id)
+        appointments: state.appointments.map(app =>
+            app.id === id ? { ...app, status: 'cancelled' } : app
+        )
+    })),
+    rescheduleAppointment: (id, date, time) => set((state) => ({
+        appointments: state.appointments.map(app =>
+            app.id === id ? { ...app, date, time } : app
+        )
     })),
 }));

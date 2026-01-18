@@ -4,10 +4,10 @@ import React, { useState } from 'react';
 import { Alert, Image, ScrollView, StatusBar, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { DoctorCard } from '../../components/organisms/DoctorCard';
-import { homeServices, healthArticles, quickActions } from '../../constants/demoData';
+import { healthArticles, quickActions } from '../../constants/demoData';
 import { labels } from '../../constants/labels';
-import { styles } from './index.styles';
 import { useAuthStore } from '../../store/authStore';
+import { styles } from './index.styles';
 
 export default function HomeScreen() {
     const router = useRouter();
@@ -22,9 +22,14 @@ export default function HomeScreen() {
 
             {/* Header */}
             <View style={styles.header}>
-                <View>
-                    <Text style={styles.greeting}>{labels.home.greeting(user?.name || labels.home.guestName)}</Text>
-                    <Text style={styles.subGreeting}>{labels.home.subGreeting}</Text>
+                <View style={styles.hospitalInfo}>
+                    <View style={styles.logoContainer}>
+                        <FontAwesome5 name="hospital-alt" size={24} color="#2196F3" />
+                    </View>
+                    <View>
+                        <Text style={styles.hospitalName}>{labels.home.hospitalName}</Text>
+                        <Text style={styles.greeting}>{labels.home.greeting(user?.name || labels.home.guestName)}</Text>
+                    </View>
                 </View>
                 <View style={styles.headerIcons}>
                     <TouchableOpacity
@@ -33,6 +38,12 @@ export default function HomeScreen() {
                     >
                         <Ionicons name="notifications-outline" size={24} color="#333" />
                         <View style={styles.badge} />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.iconButton}
+                        onPress={() => router.push('/home/profile')}
+                    >
+                        <Ionicons name="settings-outline" size={24} color="#333" />
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => router.push('/home/profile')}>
                         <Image
@@ -53,65 +64,104 @@ export default function HomeScreen() {
                         placeholder={labels.home.searchPlaceholder}
                         value={searchQuery}
                         onChangeText={setSearchQuery}
+                        onSubmitEditing={() => router.push({ pathname: '/home/search-doctor', params: { q: searchQuery } })}
                     />
                 </View>
 
-                {/* BPJS Banner */}
-                <View style={styles.bannerContainer}>
-                    <View style={styles.bannerContent}>
-                        <Text style={styles.bannerTitle}>{labels.home.bannerTitle}</Text>
-                        <Text style={styles.bannerText}>{labels.home.bannerDescription}</Text>
-                        <TouchableOpacity
-                            style={styles.bannerButton}
-                            onPress={() => router.push('/home/edit-profile')}
-                        >
-                            <Text style={styles.bannerButtonText}>{labels.home.bannerButton}</Text>
-                        </TouchableOpacity>
+                {/* Main Feature Button (Unified) */}
+                <View style={styles.mainFeatures}>
+                    <TouchableOpacity
+                        style={[styles.featureCard, styles.featureBooking, { flex: 1, minHeight: 120 }]}
+                        onPress={() => router.push('/home/search-doctor')}
+                    >
+                        <View style={[styles.featureIconContainer, { backgroundColor: 'rgba(255,255,255,0.2)' }]}>
+                            <FontAwesome5 name="user-md" size={36} color="#fff" />
+                        </View>
+                        <Text style={[styles.featureLabel, { fontSize: 18, fontWeight: 'bold' }]}>{labels.home.bookingButton}</Text>
+                        <Text style={[styles.featureLabel, { fontSize: 13, opacity: 0.9, marginTop: 4, fontWeight: 'normal' }]}>Cepat, Mudah & Tanpa Antri</Text>
+                    </TouchableOpacity>
+                </View>
+
+                {/* New Feature Grid (Smaller icons) */}
+                <View style={[styles.mainFeatures, { marginTop: -15 }]}>
+                    <TouchableOpacity
+                        style={[styles.featureCard, { backgroundColor: '#FFD54F', minHeight: 80, flex: 1 }]}
+                        onPress={() => router.push('/home/help-center')}
+                    >
+                        <FontAwesome5 name="question-circle" size={24} color="#fff" />
+                        <Text style={[styles.featureLabel, { fontSize: 13, marginTop: 8 }]}>{labels.home.helpCenter}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={[styles.featureCard, { backgroundColor: '#4DB6AC', minHeight: 80, flex: 1 }]}
+                        onPress={() => router.push('/home/help-center')}
+                    >
+                        <FontAwesome5 name="id-badge" size={24} color="#fff" />
+                        <Text style={[styles.featureLabel, { fontSize: 13, marginTop: 8 }]}>BPJS Hub</Text>
+                    </TouchableOpacity>
+                </View>
+
+                {/* BPJS Status Banner */}
+                <View style={styles.bpjsStatusBanner}>
+                    <View style={styles.bpjsStatusInfo}>
+                        <FontAwesome5 name="id-card" size={24} color="#2E7D32" />
+                        <View style={styles.bpjsStatusTextContainer}>
+                            <Text style={styles.bpjsStatusLabel}>{labels.home.bpjsStatusLabel}</Text>
+                            <Text style={styles.bpjsActiveText}>{labels.home.bpjsActiveStatus}</Text>
+                        </View>
                     </View>
-                    <FontAwesome5 name="file-medical" size={60} color="rgba(255,255,255,0.2)" style={styles.bannerIcon} />
+                    <TouchableOpacity
+                        style={styles.bpjsDetailButton}
+                        onPress={() => router.push('/home/profile')}
+                    >
+                        <Text style={styles.bpjsDetailText}>{labels.home.seeAll}</Text>
+                    </TouchableOpacity>
                 </View>
 
-                {/* Main Services Grid */}
-                <Text style={styles.sectionTitle}>{labels.home.mainServicesTitle}</Text>
-                <View style={styles.gridContainer}>
-                    {homeServices.map((item) => (
-                        <TouchableOpacity
-                            key={item.id}
-                            style={styles.gridItem}
-                            onPress={() => (item.route ? router.push(item.route) : handleInfoBed())}
-                        >
-                            <View style={[styles.gridIconContainer, { backgroundColor: item.color }]}>
-                                <FontAwesome5 name={item.icon} size={24} color={item.iconColor} />
-                            </View>
-                            <Text style={styles.gridLabel}>{item.name}</Text>
-                        </TouchableOpacity>
-                    ))}
-                </View>
-
-                {/* Quick Actions (Re-book) */}
+                {/* Appointment Reminder Section */}
                 <View style={styles.sectionHeader}>
-                    <Text style={styles.sectionTitle}>{labels.home.quickActionTitle}</Text>
+                    <Text style={styles.sectionTitle}>{labels.home.reminderTitle}</Text>
+                </View>
+                <View style={styles.reminderCard}>
+                    <View style={styles.reminderDateBox}>
+                        <Text style={styles.reminderDay}>19</Text>
+                        <Text style={styles.reminderMonth}>JAN</Text>
+                    </View>
+                    <View style={styles.reminderInfo}>
+                        <Text style={styles.reminderDoctor}>Dr. Budi Santoso</Text>
+                        <Text style={styles.reminderTime}>Besok • 09:00 WIB</Text>
+                    </View>
+                    <View style={styles.reminderStatus}>
+                        <View style={styles.statusDot} />
+                        <Text style={styles.statusText}>Aktif</Text>
+                    </View>
+                </View>
+
+                {/* Quick Actions (Pesan Ulang) */}
+                <View style={styles.sectionHeader}>
+                    <Text style={styles.sectionTitle}>{labels.home.rebookTitle}</Text>
                     <TouchableOpacity onPress={() => router.push('/home/history')}>
                         <Text style={styles.seeAll}>{labels.home.seeAll}</Text>
                     </TouchableOpacity>
                 </View>
 
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
-                    {quickActions.map((item) => (
+                    {quickActions.map((item: any) => (
                         <DoctorCard
                             key={item.id}
                             doctorName={item.doctorName}
                             specialist={item.specialist}
+                            rating={4.8} // Default for quick actions
+                            location={item.hospital}
                             price={item.price}
                             actionLabel={labels.home.bookLabel}
-                            onPress={() => router.push({ pathname: '/home/book-appointment', params: { ...item } })}
+                            onPress={() => router.push({ pathname: '/home/search-doctor/[id]' as any, params: { id: '1' } })}
                             style={styles.quickActionCard}
                             variant="stacked"
                         />
                     ))}
                 </ScrollView>
 
-                {/* Health Articles / Info (Placeholder) */}
+                {/* Health Articles */}
                 <View style={styles.sectionHeader}>
                     <Text style={styles.sectionTitle}>{labels.home.healthInfoTitle}</Text>
                 </View>
