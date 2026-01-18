@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-interface Appointment {
+export interface Appointment {
     id: string;
     doctorName: string;
     specialist: string;
