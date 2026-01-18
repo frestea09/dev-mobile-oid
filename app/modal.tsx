@@ -1,29 +1,19 @@
-import { Link } from 'expo-router';
-import { StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
 
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
+import { ScreenLayout } from '@/components/atomic/templates/screen-layout';
+import { AppButton } from '@/components/atomic/atoms/app-button';
+import { AppText } from '@/components/atomic/atoms/app-text';
+import { labels } from '@/constants/labels';
+import { styles } from '@/app/modal.style';
 
 export default function ModalScreen() {
+  const router = useRouter();
+
   return (
-    <ThemedView style={styles.container}>
-      <ThemedText type="title">This is a modal</ThemedText>
-      <Link href="/" dismissTo style={styles.link}>
-        <ThemedText type="link">Go to home screen</ThemedText>
-      </Link>
-    </ThemedView>
+    <ScreenLayout style={styles.container}>
+      <AppText variant="title">{labels.modal.title}</AppText>
+      <AppText variant="body">{labels.modal.description}</AppText>
+      <AppButton label={labels.modal.backHome} onPress={() => router.replace('/')} />
+    </ScreenLayout>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-  link: {
-    marginTop: 15,
-    paddingVertical: 15,
-  },
-});
