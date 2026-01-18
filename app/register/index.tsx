@@ -1,11 +1,11 @@
 import { FontAwesome5 } from '@expo/vector-icons';
 import { Link, useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { ActivityIndicator, Alert, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { labels } from '../../constants/labels';
-import { styles } from './index.styles';
 import { useAuthStore } from '../../store/authStore';
+import { styles } from './index.styles';
 
 export default function RegisterScreen() {
     const router = useRouter();
@@ -53,35 +53,39 @@ export default function RegisterScreen() {
         setLoading(true);
 
         // Simulate API Call
+        // Simulate API Call
         setTimeout(() => {
             setLoading(false);
 
             // Register user to store (simulate DB)
-            const successLogin = () => {
-                register({
-                    name: formData.nama,
-                    email: formData.contact.includes('@') ? formData.contact : '',
-                    phone: !formData.contact.includes('@') ? formData.contact : '08123456789',
-                    bpjs: formData.no_bpjs,
-                    address: formData.alamat,
-                    birthDate: formData.tgllahir,
-                    gender: formData.kelamin,
-                    username: formData.username,
-                    password: formData.password
-                });
-                router.replace('/');
-            };
+            register({
+                name: formData.nama,
+                email: formData.contact.includes('@') ? formData.contact : '',
+                phone: !formData.contact.includes('@') ? formData.contact : '08123456789',
+                bpjs: formData.no_bpjs,
+                address: formData.alamat,
+                birthDate: formData.tgllahir,
+                gender: formData.kelamin,
+                username: formData.username,
+                password: formData.password
+            });
 
-            Alert.alert(
-                labels.auth.registerSuccessTitle,
-                labels.auth.registerSuccessMessage,
-                [
-                    {
-                        text: labels.auth.registerOkButton,
-                        onPress: successLogin
-                    }
-                ]
-            );
+            // Handle navigation based on platform
+            if (Platform.OS === 'web') {
+                window.alert(labels.auth.registerSuccessMessage);
+                router.replace('/');
+            } else {
+                Alert.alert(
+                    labels.auth.registerSuccessTitle,
+                    labels.auth.registerSuccessMessage,
+                    [
+                        {
+                            text: labels.auth.registerOkButton,
+                            onPress: () => router.replace('/')
+                        }
+                    ]
+                );
+            }
         }, 1500);
     };
 
