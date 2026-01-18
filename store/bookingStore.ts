@@ -7,6 +7,7 @@ export interface Appointment {
     hospital: string;
     date: string;
     time: string;
+    nik: string;
     status: 'upcoming' | 'completed' | 'cancelled';
     diagnosis?: string;
     serviceName?: string;
@@ -29,6 +30,7 @@ export const useBookingStore = create<BookingState>((set) => ({
             hospital: 'RSUD O.I.D',
             date: '2026-01-20',
             time: '09:30',
+            nik: '3201012345678901',
             status: 'upcoming',
         },
         {
@@ -38,6 +40,7 @@ export const useBookingStore = create<BookingState>((set) => ({
             hospital: 'RSUD O.I.D',
             date: '2026-01-15',
             time: '08:00',
+            nik: '3201012345678901',
             status: 'completed',
             diagnosis: 'Gejala flu ringan, butuh istirahat.',
             serviceName: 'Konsultasi Umum',

@@ -1,4 +1,5 @@
 import { FontAwesome5 } from '@expo/vector-icons';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
@@ -34,10 +35,6 @@ export default function BookAppointmentScreen() {
     const today = new Date();
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
-    const dayAfter = new Date(today);
-    dayAfter.setDate(dayAfter.getDate() + 2);
-    const dayAfterNext = new Date(today);
-    dayAfterNext.setDate(dayAfterNext.getDate() + 3);
 
     const formatDate = (date: Date) => {
         const d = date.getDate().toString().padStart(2, '0');
@@ -46,28 +43,34 @@ export default function BookAppointmentScreen() {
         return `${y}-${m}-${d}`;
     };
 
-    const getDayName = (date: Date) => {
-        const days = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
-        return days[date.getDay()];
-    };
-
-    const customCalendarDates = [
-        { date: formatDate(tomorrow), day: getDayName(tomorrow), label: tomorrow.getDate().toString() },
-        { date: formatDate(dayAfter), day: getDayName(dayAfter), label: dayAfter.getDate().toString() },
-        { date: formatDate(dayAfterNext), day: getDayName(dayAfterNext), label: dayAfterNext.getDate().toString() },
-    ];
 
     // Form State
-    const [selectedDate, setSelectedDate] = useState(customCalendarDates[0].date);
+    const [date, setDate] = useState(tomorrow);
+    const [showDatePicker, setShowDatePicker] = useState(false);
+    const [selectedDate, setSelectedDate] = useState(formatDate(tomorrow));
     const [userData, setUserData] = useState({
         name: user?.name || '',
         phone: user?.phone || '',
         bpjs: user?.bpjs || '',
-        address: user?.address || ''
+        address: user?.address || '',
+        nik: user?.nik || '',
     });
     const [isEditing, setIsEditing] = useState(false);
 
+    const onDateChange = (event: any, selectedDate?: Date) => {
+        const currentDate = selectedDate || date;
+        setShowDatePicker(false);
+        setDate(currentDate);
+        setSelectedDate(formatDate(currentDate));
+    };
+
     const handleConfirm = () => {
+
+        if (userData.nik.length !== 16) {
+            PlatformAlert.alert(labels.booking.attentionTitle, labels.booking.invalidNik);
+            return;
+        }
+
         const confirmAction = () => {
             addAppointment(
                 createAppointment({
@@ -75,11 +78,22 @@ export default function BookAppointmentScreen() {
                     specialist: doctor.specialist,
                     hospital: doctor.location,
                     date: selectedDate,
-                    time: '--:--', // Placeholder or empty
+                    time: '--:--',
+                    nik: userData.nik,
                 })
             );
-            // Navigate to Success Screen
-            router.replace('/home/appointment-success');
+
+            // Show success message then navigate
+            PlatformAlert.alert(
+                labels.appointmentSuccess.title,
+                labels.appointmentSuccess.bookingConfirmMessage,
+                [
+                    {
+                        text: 'OK',
+                        onPress: () => router.replace('/home/appointment-success')
+                    }
+                ]
+            );
         };
 
         PlatformAlert.alert(
@@ -113,25 +127,31 @@ export default function BookAppointmentScreen() {
                     </View>
                 </View>
 
-                {/* Date Selection (Calendar View Style) */}
+                {/* Date Selection (Picker Style) */}
                 <View style={styles.section}>
                     <View style={styles.sectionHeader}>
                         <Text style={styles.sectionTitle}>{labels.booking.selectDate}</Text>
-                        <Text style={{ fontSize: 11, color: '#94A3B8' }}>{labels.history.bookingRestriction}</Text>
                     </View>
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.calendarScroll}>
-                        {customCalendarDates.map((item, index) => (
-                            <TouchableOpacity
-                                key={index}
-                                style={[styles.dateCard, selectedDate === item.date && styles.dateCardActive]}
-                                onPress={() => setSelectedDate(item.date)}
-                            >
-                                <Text style={[styles.dayText, selectedDate === item.date && styles.textActive]}>{item.day}</Text>
-                                <Text style={[styles.dateText, selectedDate === item.date && styles.textActive]}>{item.label}</Text>
-                            </TouchableOpacity>
-                        ))}
-                    </ScrollView>
+                    <TouchableOpacity
+                        style={styles.pickerTrigger}
+                        onPress={() => setShowDatePicker(true)}
+                    >
+                        <Text style={styles.pickerText}>{selectedDate}</Text>
+                        <FontAwesome5 name="calendar-alt" size={18} color="#2196F3" />
+                    </TouchableOpacity>
+
+                    {showDatePicker && (
+                        <DateTimePicker
+                            value={date}
+                            mode="date"
+                            display="default"
+                            onChange={onDateChange}
+                            minimumDate={tomorrow}
+                        />
+                    )}
                 </View>
+
+
 
                 {/* Personal Data Confirmation */}
                 <View style={styles.section}>
@@ -181,6 +201,24 @@ export default function BookAppointmentScreen() {
                             multiline
                         />
                     </View>
+
+                    {/* NIK Field - Auto filled if exists, otherwise manual */}
+                    {!(user?.nik && !isEditing) && (
+                        <View style={styles.formGroup}>
+                            <Text style={styles.label}>{labels.booking.nik}</Text>
+                            <TextInput
+                                style={[styles.input, (user?.nik && !isEditing) && styles.inputDisabled]}
+                                value={userData.nik}
+                                placeholder={labels.booking.nikPlaceholder}
+                                editable={isEditing || !user?.nik}
+                                onChangeText={(t) => setUserData({ ...userData, nik: t.replace(/[^0-9]/g, '').slice(0, 16) })}
+                                keyboardType="number-pad"
+                            />
+                            {userData.nik.length > 0 && userData.nik.length < 16 && (
+                                <Text style={{ fontSize: 11, color: '#F44336', marginTop: 4 }}>{labels.booking.invalidNik}</Text>
+                            )}
+                        </View>
+                    )}
                 </View>
 
                 {/* Booking Summary Card */}
@@ -193,6 +231,10 @@ export default function BookAppointmentScreen() {
                     <View style={styles.summaryRow}>
                         <FontAwesome5 name="calendar-alt" size={14} color="#1565C0" style={styles.summaryIcon} />
                         <Text style={styles.summaryText}>{selectedDate}</Text>
+                    </View>
+                    <View style={styles.summaryRow}>
+                        <FontAwesome5 name="id-card" size={14} color="#1565C0" style={styles.summaryIcon} />
+                        <Text style={styles.summaryText}>NIK: {userData.nik || '--'}</Text>
                     </View>
                     <View style={styles.summaryRow}>
                         <FontAwesome5 name="map-marker-alt" size={14} color="#1565C0" style={styles.summaryIcon} />

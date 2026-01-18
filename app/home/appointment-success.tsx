@@ -5,15 +5,26 @@ import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppButton } from '../../components/atoms/AppButton';
 import { labels } from '../../constants/labels';
-import { useAuthStore } from '../../store/authStore';
+import { useBookingStore } from '../../store/bookingStore';
 import { PlatformAlert } from '../../utils/platformAlert';
 import { styles } from './appointment-success.styles';
 
 export default function AppointmentSuccessScreen() {
     const router = useRouter();
-    const { user } = useAuthStore();
-    const mockOrderNumber = 'ORD-20260120-123';
-    const nik = user?.nik || '1234567890123456'; // Fallback for demo
+    const { appointments } = useBookingStore();
+
+    // Get the most recent appointment
+    const appointment = appointments[0];
+
+    if (!appointment) {
+        return (
+            <SafeAreaView style={styles.container}>
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text>Pemesanan tidak ditemukan.</Text>
+                </View>
+            </SafeAreaView>
+        );
+    }
 
     const handleDownload = () => {
         PlatformAlert.alert(labels.appointmentSuccess.downloadSuccessTitle, labels.appointmentSuccess.downloadSuccessMessage);
@@ -22,6 +33,14 @@ export default function AppointmentSuccessScreen() {
     const handleShare = () => {
         PlatformAlert.alert(labels.appointmentSuccess.shareSuccessTitle, labels.appointmentSuccess.shareSuccessMessage);
     };
+
+    // QR Data contains NIK and Order ID
+    const qrData = JSON.stringify({
+        nik: appointment.nik,
+        orderId: appointment.id,
+        doctor: appointment.doctorName,
+        date: appointment.date,
+    });
 
     return (
         <SafeAreaView style={styles.container} edges={['top']}>
@@ -37,9 +56,8 @@ export default function AppointmentSuccessScreen() {
                     <Text style={styles.qrTitle}>{labels.appointmentSuccess.qrTitle}</Text>
 
                     <View style={styles.qrWrapper}>
-                        {/* Mock QR Code using NIK for consistency */}
                         <Image
-                            source={{ uri: `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${user?.nik || mockOrderNumber}` }}
+                            source={{ uri: `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrData)}` }}
                             style={styles.qrImage}
                         />
                     </View>
@@ -49,11 +67,23 @@ export default function AppointmentSuccessScreen() {
                     <View style={styles.verificationDetails}>
                         <View style={styles.infoRow}>
                             <Text style={styles.infoLabel}>{labels.appointmentSuccess.nikLabel}</Text>
-                            <Text style={styles.infoValue}>{nik}</Text>
+                            <Text style={styles.infoValue}>{appointment.nik}</Text>
                         </View>
                         <View style={styles.infoRow}>
                             <Text style={styles.infoLabel}>{labels.appointmentSuccess.orderLabel}</Text>
-                            <Text style={styles.infoValue}>{mockOrderNumber}</Text>
+                            <Text style={styles.infoValue}>{appointment.id}</Text>
+                        </View>
+                        <View style={styles.infoRow}>
+                            <Text style={styles.infoLabel}>{labels.booking.doctorLabel}</Text>
+                            <Text style={styles.infoValue}>{appointment.doctorName}</Text>
+                        </View>
+                        <View style={styles.infoRow}>
+                            <Text style={styles.infoLabel}>{labels.booking.dateLabel}</Text>
+                            <Text style={styles.infoValue}>{appointment.date}</Text>
+                        </View>
+                        <View style={styles.infoRow}>
+                            <Text style={styles.infoLabel}>Lokasi</Text>
+                            <Text style={styles.infoValue}>{appointment.hospital}</Text>
                         </View>
                     </View>
                 </View>

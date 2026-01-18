@@ -199,4 +199,19 @@ export const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
     },
+    pickerTrigger: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#F8F9FA',
+        borderWidth: 1,
+        borderColor: '#E9ECEF',
+        borderRadius: 12,
+        padding: 16,
+        justifyContent: 'space-between',
+    },
+    pickerText: {
+        fontSize: 16,
+        color: '#333',
+        fontWeight: '500',
+    },
 });

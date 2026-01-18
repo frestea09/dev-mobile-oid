@@ -6,6 +6,7 @@ interface BookingPayload {
     hospital: string;
     date: string;
     time: string;
+    nik: string;
 }
 
 export const createAppointment = (payload: BookingPayload): Appointment => ({
@@ -15,5 +16,6 @@ export const createAppointment = (payload: BookingPayload): Appointment => ({
     hospital: payload.hospital,
     date: payload.date,
     time: payload.time,
+    nik: payload.nik,
     status: 'upcoming',
 });

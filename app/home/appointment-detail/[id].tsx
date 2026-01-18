@@ -82,18 +82,25 @@ export default function AppointmentDetailScreen() {
 
                 {/* QR Code Verification */}
                 <View style={styles.qrSection}>
-                    <Text style={styles.qrTitle}>QR Verification</Text>
-                    <Text style={styles.qrSubtitle}>Tunjukkan QR ini kepada petugas pendaftaran saat tiba di rumah sakit.</Text>
+                    <Text style={styles.qrTitle}>{labels.appointmentSuccess.qrTitle}</Text>
+                    <Text style={styles.qrSubtitle}>{labels.appointmentSuccess.verifyInstruction}</Text>
 
                     <View style={styles.qrPlaceholder}>
                         <Image
-                            source={{ uri: `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${user?.nik || appointment.id}` }}
+                            source={{
+                                uri: `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(JSON.stringify({
+                                    nik: appointment.nik,
+                                    orderId: appointment.id,
+                                    doctor: appointment.doctorName,
+                                    date: appointment.date
+                                }))}`
+                            }}
                             style={{ width: 180, height: 180 }}
                         />
                     </View>
 
                     <View style={styles.nikBadge}>
-                        <Text style={styles.nikText}>NIK: {user?.nik || '3201XXXXXXXXXXXX'}</Text>
+                        <Text style={styles.nikText}>{labels.appointmentSuccess.nikLabel}: {appointment.nik}</Text>
                     </View>
                 </View>
 
